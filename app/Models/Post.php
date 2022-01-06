@@ -2,23 +2,37 @@
 
 	namespace App\Models;
     use Illuminate\Support\Facades\File;
+    use Spatie\YamlFrontMatter;
     class Post {
+        public $title;
+        public  $excerpt;
+        public $date;
+        public $body;
+        public $slug;
+
+        public function __construct($title,$excerpt,$date,$body,$slug) {
+            $this->title =$title;
+            $this->excerpt = $excerpt;
+            $this->date = $date;
+            $this->body =$body;
+            $this->slug =$slug;
+        }
+
         /**
          * @throws \Exception
          */
         public static function find($slug){
-            if(!file_exists($path =resource_path("posts/{$slug}.html"))){
-                var_dump($path);
-                ddd('file no exist');
-            }
-            return cache()->remember("posts.{$slug}",1200, function () use ( $path ) {
-                return file_get_contents( $path );
-            } );
+           $posts =static::all();
+           return $posts->firstWhere('slug',$slug);
         }
         public static function all(){
-            $files= File::allFiles(resource_path("posts/"));
-            return array_map(function ($file){
-                return $file->getContents();
-            },$files);
+            $posts = collect(File::files(resource_path('posts')))
+                ->map(function ($file){
+                    return YamlFrontMatter\YamlFrontMatter::parseFile($file);
+                })
+                ->map(function ($document){
+                    return new Post($document->matter('title'),$document->matter('exceprt'),$document->matter('date'),$document->body(),$document->slug);
+                });
+            return $posts;
         }
 	}
