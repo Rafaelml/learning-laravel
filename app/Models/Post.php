@@ -26,13 +26,14 @@
            return $posts->firstWhere('slug',$slug);
         }
         public static function all(){
-            $posts = collect(File::files(resource_path('posts')))
-                ->map(function ($file){
-                    return YamlFrontMatter\YamlFrontMatter::parseFile($file);
-                })
-                ->map(function ($document){
-                    return new Post($document->matter('title'),$document->matter('exceprt'),$document->matter('date'),$document->body(),$document->slug);
-                });
-            return $posts;
+            return cache()->rememberForever('posts.all',function (){
+                return collect(File::files(resource_path('posts')))
+                    ->map(function ($file){
+                        return YamlFrontMatter\YamlFrontMatter::parseFile($file);
+                    })
+                    ->map(function ($document){
+                        return new Post($document->matter('title'),$document->matter('exceprt'),$document->matter('date'),$document->body(),$document->slug);
+                    })->sortByDesc('date');
+            });
         }
 	}
