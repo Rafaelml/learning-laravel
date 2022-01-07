@@ -1,1 +1,2 @@
-Personal project to learn laravel
+Personal project to learn laravel</br>
+Author: Rafael Madrigal Lamadrid
