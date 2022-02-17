@@ -1,44 +1,15 @@
 <?php
 
-	namespace App\Models;
-    use Illuminate\Database\Eloquent\ModelNotFoundException;
-    use Illuminate\Support\Facades\File;
-    use Spatie\YamlFrontMatter;
-    class Post {
-        public $title;
-        public  $excerpt;
-        public $date;
-        public $body;
-        public $slug;
+namespace App\Models;
 
-        public function __construct($title,$excerpt,$date,$body,$slug) {
-            $this->title =$title;
-            $this->excerpt = $excerpt;
-            $this->date = $date;
-            $this->body =$body;
-            $this->slug =$slug;
-        }
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-        /**
-         * @throws \Exception
-         */
-        public static function find($slug){
-           $posts =static::all();
-           $post =$posts->firstWhere('slug',$slug);
-           if(! $post){
-               throw new ModelNotFoundException();
-           }
-           return $post;
-        }
-        public static function all(){
-            return cache()->rememberForever('posts.all',function (){
-                return collect(File::files(resource_path('posts')))
-                    ->map(function ($file){
-                        return YamlFrontMatter\YamlFrontMatter::parseFile($file);
-                    })
-                    ->map(function ($document){
-                        return new Post($document->matter('title'),$document->matter('exceprt'),$document->matter('date'),$document->body(),$document->slug);
-                    })->sortByDesc('date');
-            });
-        }
-	}
+class Post extends Model
+{
+    use HasFactory;
+    protected $fillable = ['slug','title','excerpt','body'];
+    public function getRouteKeyName() {
+        return 'slug';
+    }
+}
