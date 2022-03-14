@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Psy\CodeCleaner\UseStatementPass;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,45 +17,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        User::truncate();
-        Category::truncate();
-        Post::truncate();
-         $user = User::factory()->create();
-         Category::create([
-             'name' => 'Personal',
-             'slug' => 'personal'
-         ]);
-        $family =Category::create([
-            'name' => 'Family',
-            'slug' => 'family'
+        $user = User::factory()->create([
+            'name' => 'Rafael Madrigal'
         ]);
-        $work = Category::create([
-            'name' => 'Work',
-            'slug' => 'work'
+        Post::factory(5)->create([
+            'user_id' => $user->id
         ]);
-        Post::create([
-            'user_id' =>$user->id,
-            'category_id' =>$family->id,
-            'title' =>'My family Post',
-            'slug' =>'my-first-post',
-            'excerpt' =>'KJKALSDF KSDJFKLSADJFKSAD',
-            'body' => '<p>KSDAFJKLSADJFKLSDJF sjflkasdjfksladjfklasdjfaksdjfkalsj
-            dkfjasldjfklsadjfsadkl</p>']);
-        Post::create([
-            'user_id' =>$user->id,
-            'category_id' =>$family->id,
-            'title' =>'My family Post',
-            'slug' =>'my-second-post',
-            'excerpt' =>'KJKALSDF KSDJFKLSADJFKSAD',
-            'body' => '<p>KSDAFJKLSADJFKLSDJF sjflkasdjfksladjfklasdjfaksdjfkalsj
-            dkfjasldjfklsadjfsadkl</p>']);
-        Post::create([
-            'user_id' =>$user->id,
-            'category_id' =>$work->id,
-            'title' =>'My family Post',
-            'slug' =>'my-third-post',
-            'excerpt' =>'KJKALSDF KSDJFKLSADJFKSAD',
-            'body' => '<p>KSDAFJKLSADJFKLSDJF sjflkasdjfksladjfklasdjfaksdjfkalsj
-            dkfjasldjfklsadjfsadkl</p>']);
     }
 }
